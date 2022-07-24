@@ -1,0 +1,3 @@
+[submodule "site-frontend"]
+	path = site-frontend
+	url = git@github.com:SamuelSlavka/site-frontend.git
