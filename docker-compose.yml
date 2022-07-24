@@ -1,0 +1,82 @@
+version: '3.4'
+services:
+  frontend:
+    container_name: site.frontend
+    image: site-frontend
+    build:
+      context: frontend
+      dockerfile: docker/Dockerfile
+    volumes:
+      - './frontend/:/app'
+      - './docker-compose/frontend/config/config.json:/app/src/assets/config.json'
+    depends_on:
+      - db
+    ports:
+      - "4200:4200"
+
+  db:
+    container_name: site.db
+    image: postgres:10.5
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_ROOT_PASSWORD=postgres
+    volumes:
+      - './docker-compose/psql/data:/var/lib/psql'
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+
+  adminer:
+    container_name: site.adminer
+    image: adminer
+    environment:
+      - ADMINER_DEFAULT_SERVER=mymis.db
+    ports:
+      - 8090:8080
+    depends_on:
+      - db
+  nginx:
+    image: site.nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "4000:4000"
+    depends_on:
+      - frontend
+    # volumes:
+    #   - web-root:/var/www/html
+    #   - ./nginx-conf:/etc/nginx/conf.d
+    #   - certbot-etc:/etc/letsencrypt
+    #   - certbot-var:/var/lib/letsencrypt
+    #   - dhparam:/etc/ssl/certs
+
+  # certbot:
+  #   image: certbot/certbot:arm32v6-latest
+  #   container_name: certbot
+  #   volumes:
+  #     - certbot-etc:/etc/letsencrypt
+  #     - certbot-var:/var/lib/letsencrypt
+  #     - web-root:/var/www/html
+  #   command: certonly --webroot --webroot-path=/var/www/html --email slavka.samuel@gmail.com --agree-tos --no-eff-email --staging -d slavka.one  -d www.slavka.one
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rpi/slavkaone/
+      o: bind
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rpi/slavkaone/dhparam/
+      o: bind

@@ -1,6 +1,6 @@
-[submodule "site-frontend"]
-	path = site-frontend
+[submodule "frontend"]
+	path = frontend
 	url = git@github.com:SamuelSlavka/site-frontend.git
-[submodule "site-backend"]
-	path = site-backend
+[submodule "backend"]
+	path = backend
 	url = git@github.com:SamuelSlavka/site-backend.git
