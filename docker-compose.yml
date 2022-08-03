@@ -5,7 +5,7 @@ services:
     image: site-frontend
     build:
       context: frontend
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     volumes:
       - './frontend/:/app'
       - './docker-compose/frontend/config/config.json:/app/src/assets/config.json'
@@ -57,6 +57,7 @@ services:
     network_mode: host
     container_name: site.cloudflared
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token eyJhIjoiOTRjZGYwZmZlYjkzZTI4ZGEzNDAzMDA0NGFhYjliZTIiLCJ0IjoiN2QxYzMyNDQtNDdhMC00YWYxLWJmODEtZmM5MDlmMzJhYjU2IiwicyI6Ik9UQTBaRGMzWVdZdFpEY3hNUzAwWTJJekxXSTFPVFF0WXpZM056ZzBPRE0xTkRneSJ9
+    command: tunnel --no-autoupdate run --token ${cloudflare_token}
     volumes:
       - /opt/cloudflared/data:/home/nonroot/.cloudflared/
+
