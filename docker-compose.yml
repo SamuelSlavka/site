@@ -58,6 +58,8 @@ services:
     container_name: site.cloudflared
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${cloudflare_token}
+    environment: 
+      - TUNNEL_URL=http://nginx:80
     volumes:
       - /opt/cloudflared/data:/home/nonroot/.cloudflared/
 
