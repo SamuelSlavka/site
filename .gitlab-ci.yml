@@ -25,7 +25,6 @@ deploy:
   script:
     - pwd
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "pacman --noconfirm -S cloudflared"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "systemctl restart cloudflared"
     # - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker pull registry.gitlab.com/samuelslavka/site-frontend"
     # - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker stop frontend || true && docker rm frontend || true"
     # - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker run -p 3001:3000 -d --name frontend registry.gitlab.com/samuelslavka/frontend"
