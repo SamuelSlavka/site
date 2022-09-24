@@ -9,3 +9,25 @@ services:
     ports:
       - "4000:4000"
     network_mode: "host"
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    environment:
+      - AUDIOBOOKSHELF_UID=99
+      - AUDIOBOOKSHELF_GID=100
+    ports:
+      - 13378:80
+    volumes:
+      - ~/shelf/audiobooks:/audiobooks
+      - ~/shelf/config:/config
+      - ~/shelf/metadata:/metadata
+    
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    network_mode: "host"
+    volumes:
+      - ~/jelly/config:/config
+      - ~/jelly/cache:/cache
+      - ~/jelly/media:/media
+    restart: "unless-stopped"
