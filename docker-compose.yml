@@ -1,16 +1,5 @@
 version: '3.4'
 services:
-  frontend:
-    container_name: site.frontend
-    image: site-frontend
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    volumes:
-      - './frontend/:/app'
-    ports:
-      - "3000:3000"
-
   nginx:
     image: nginx:mainline-alpine
     container_name: site.nginx
