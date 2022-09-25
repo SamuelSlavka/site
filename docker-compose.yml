@@ -2,7 +2,7 @@ version: '3.4'
 services:
   nginx:
     image: nginx:mainline-alpine
-    container_name: site.nginx
+    container_name: nginx
     restart: unless-stopped
     volumes:
       - ./nginx:/etc/nginx/conf.d
@@ -11,6 +11,7 @@ services:
     network_mode: "host"
 
   audiobookshelf:
+    container_name: audiobookshelf
     image: ghcr.io/advplyr/audiobookshelf:latest
     environment:
       - AUDIOBOOKSHELF_UID=99
