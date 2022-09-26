@@ -34,11 +34,14 @@ services:
     restart: "unless-stopped"
 
   nextcloud:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: nextcloud
+    restart: always
     ports:
-      - "8080:80"
+      - 8080:80
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=nextcloud_db
@@ -52,8 +55,13 @@ services:
     restart: always
     hostname: 'postgres' 
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - db:/var/lib/postgres
     environment:
       - POSTGRES_DB=nextcloud_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=testing123
+  
+
+volumes:
+  nextcloud:
+  db:
