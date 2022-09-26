@@ -32,3 +32,28 @@ services:
       - ~/jelly/cache:/cache
       - ~/jelly/media:/media
     restart: "unless-stopped"
+
+  nextcloud:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=nextcloud_db
+      - POSTGRES_USER=postgres 
+      - POSTGRES_PASSWORD=testing123
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    hostname: 'postgres' 
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nextcloud_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testing123
