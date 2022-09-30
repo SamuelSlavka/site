@@ -40,7 +40,7 @@ deploy:
     - echo "$SSH_CONFIG" | tr -d '\r' > /etc/ssh/ssh_config.d/config.conf
     - echo "deploying"
   script:
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem root@$PROD_SERVER_IP "pacman --noconfirm -S cloudflared"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "pacman --noconfirm -S cloudflared"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY""
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker-compose down"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker-compose pull"
