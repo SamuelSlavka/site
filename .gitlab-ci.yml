@@ -46,9 +46,8 @@ deploy:
     - ssh -4 -o StrictHostKeyChecking=no -i root-key.pem root@$PROD_SERVER_IP "(ls site >> /dev/null 2>&1 && rm -rf site) || echo 0"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "(ls site >> /dev/null 2>&1 && echo 0) || git clone https://gitlab.com/SamuelSlavka/site.git"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd site"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "git pull"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker-compose down"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker-compose pull"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker-compose up -d"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && git pull"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose down"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose pull"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose up -d"
 
