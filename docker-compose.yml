@@ -57,7 +57,7 @@ services:
     container_name: postgres
     hostname: 'postgres' 
     volumes:
-      - db:/var/lib/postgres/data
+      - db:/var/lib/postgres
     environment:
       - POSTGRES_DB=nextcloud_db
       - POSTGRES_USER=postgres
