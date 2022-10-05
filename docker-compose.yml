@@ -34,36 +34,27 @@ services:
     restart: "unless-stopped"
 
   nextcloud:
-    image: nextcloud:22
     container_name: nextcloud
-    restart: always
+    restart: unless-stopped
+    image: nextcloud
     ports:
-      - 8080:80
-    links:
-      - db
+      - 8080:80 #Port change
     volumes:
-      - nextcloud:/var/www/html
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DB=nextcloud_db
-      - POSTGRES_USER=postgres 
-      - POSTGRES_PASSWORD=testing123
+      - /containers/cloud/nextcloud/apps:/var/www/html/apps
+      - /containers/cloud/nextcloud/config:/var/www/html/config
+      - /containers/cloud/nextcloud/data:/var/www/html/data
     depends_on:
       - db
 
   db:
-    image: postgres
-    restart: always
-    container_name: postgres
-    hostname: 'postgres' 
-    volumes:
-      - db:/var/lib/postgres
+    container_name: maria-db
+    restart: unless-stopped
+    image: mariadb
+    command: --innodb-read-only-compressed=OFF #Maria-DB fix
     environment:
-      - POSTGRES_DB=nextcloud_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=testing123
-  
-
-volumes:
-  nextcloud:
-  db:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}}
+      MYSQL_DATABASE: ncdb
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - /containers/cloud/mariadb:/var/lib/mysql

@@ -15,6 +15,7 @@ docker-build:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
+    - echo "$ENV_FILE" | tr -d '\r' > .env
     - docker-compose down
     - docker-compose build
     - docker-compose push
@@ -41,13 +42,15 @@ deploy:
     - chmod 400 root-key.pem
     - echo "$SSH_CONFIG" | tr -d '\r' > /etc/ssh/ssh_config.d/config.conf
     - echo "deploying"
+    - echo "$ENV_FILE" | tr -d '\r' > .env
   script:
     - ssh -4 -o StrictHostKeyChecking=no -i root-key.pem root@$PROD_SERVER_IP "pacman --noconfirm -S cloudflared"
-    - ssh -4 -o StrictHostKeyChecking=no -i root-key.pem root@$PROD_SERVER_IP "(ls site >> /dev/null 2>&1 && rm -rf site) || echo 0"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "(ls site >> /dev/null 2>&1 && echo 0) || git clone https://gitlab.com/SamuelSlavka/site.git"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && git pull"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose down"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose pull"
-    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose up -d"
 
+    - scp -4 -o StrictHostKeyChecking=no -i key.pem .env rpi@$PROD_SERVER_IP:~/next/.env
+    - scp -4 -o StrictHostKeyChecking=no -i key.pem docker-compose-deploy.yml rpi@$PROD_SERVER_IP:~/next/docker-compose.yml
+
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/next ; docker-compose down"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/next ; docker system prune"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/next ; docker-compose pull"
+    - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/next ; docker-compose up -d"
