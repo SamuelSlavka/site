@@ -38,7 +38,12 @@ services:
     restart: unless-stopped
     image: nextcloud
     ports:
-      - 8080:80 #Port change
+      - 8080:80
+    environment:
+      MYSQL_DATABASE: ncdb
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: db
     volumes:
       - /containers/cloud/nextcloud/apps:/var/www/html/apps
       - /containers/cloud/nextcloud/config:/var/www/html/config
@@ -50,9 +55,9 @@ services:
     container_name: maria-db
     restart: unless-stopped
     image: mariadb
-    command: --innodb-read-only-compressed=OFF #Maria-DB fix
+    command: --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ncdb
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
