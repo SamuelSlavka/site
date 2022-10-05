@@ -2,8 +2,8 @@
 
 ## Setup
 
-This app is separated into two submodules both on gitlab and each has its own pipelines. This pipline only refreshes services and the main proxy.
-
+This app is separated into two submodules both on gitlab and each has its own pipelines. This pipline only refreshes services and the main proxy. 
+All docker immmgaes are built for arm64 architecture.
 ### Submodules
 ```
 $ git submodule init
