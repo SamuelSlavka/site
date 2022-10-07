@@ -1,13 +1,11 @@
-version: '3.4'
+version: '3'
 services:
   nginx:
     image: nginx:mainline-alpine
     container_name: nginx
     restart: unless-stopped
     volumes:
-      - ./nginx:/etc/nginx/conf.d
-    ports:
-      - "4000:4000"
+      - ./:/etc/nginx/conf.d
     network_mode: "host"
 
   audiobookshelf:
