@@ -47,7 +47,7 @@ deploy:
     
     - scp -4 -o StrictHostKeyChecking=no -i key.pem .env rpi@$PROD_SERVER_IP:~/site/.env
     - scp -4 -o StrictHostKeyChecking=no -i key.pem docker-compose.yml rpi@$PROD_SERVER_IP:~/site/docker-compose.yml
-    - scp -4 -o StrictHostKeyChecking=no -i key.pem nginx/nginx.conf rpi@$PROD_SERVER_IP:~/site/nginx/docker-compose.yml
+    - scp -4 -o StrictHostKeyChecking=no -i key.pem nginx.conf rpi@$PROD_SERVER_IP:~/site/nginx.conf
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose down"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose pull"
     - ssh -4 -o StrictHostKeyChecking=no -i key.pem rpi@$PROD_SERVER_IP "cd ~/site && docker-compose up -d"
