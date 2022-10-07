@@ -2,8 +2,8 @@
 
 ## Setup
 
-This app is separated into two submodules both on gitlab and each has its own pipelines. This pipline only refreshes services and the main proxy. 
-All docker immmgaes are built for arm64 architecture.
+This app is separated into two submodules both on GitLab and each has its pipelines. This pipeline only refreshes services and the main proxy. 
+All docker images are built for arm64 architecture.
 
 
 
@@ -15,16 +15,16 @@ $ git submodule update
 
 
 ### Project setup
-Each project has own .env file, which are structured like .env.dist files.
+Each project has its .env file, which is structured like .env.dist files.
 
-### CI/DI setup
-If using specific runner, it needs to contain following configuration:
+### CI/CD setup
+If using a specific runner, it needs to contain the following configuration:
 ```
 environment = ["DOCKER_HOST=tcp://localhost:2375", "DOCKER_TLS_CERTDIR="]
 privileged = true
 
 ```
-Pipelines have subsets of variables, necessary to run them. Main Site repo has following: 
+Pipelines have subsets of variables, necessary to run them. The Main Site repo has the following: 
 ```
 CI_REGISTRY: [registry.gitlab.com]
 CI_REGISTRY_PASSWORD: [passwd]
@@ -39,10 +39,10 @@ SSH_PRIVATE_KEY: [pk]
 SSH_ROOT_PRIVATE_KEY: [root enabled pk]
 ```
 
-## Run
-This module has only immages so no need to build to run the main proxy use following:
+## Run the project
+This module has only images so no need to build to run the main proxy use following:
 ```
-$ docker compose up
+$ docker-compose up
 ```
 
 
