@@ -1,4 +1,12 @@
-version: '3'
+version: "3"
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data: {}
+
 services:
   nginx:
     image: nginx:mainline-alpine
@@ -7,6 +15,50 @@ services:
     volumes:
       - ./:/etc/nginx/conf.d
     network_mode: "host"
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    ports:
+      - 9100:9100
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_PASSWORD}
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./:/etc/grafana
+    restart: unless-stopped
+    ports:
+      - 3001:3000
 
   audiobookshelf:
     container_name: audiobookshelf
@@ -20,7 +72,7 @@ services:
       - ~/shelf/audiobooks:/audiobooks
       - ~/shelf/config:/config
       - ~/shelf/metadata:/metadata
-    
+
   jellyfin:
     image: jellyfin/jellyfin
     container_name: jellyfin
