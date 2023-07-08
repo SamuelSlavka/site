@@ -9,7 +9,6 @@ on:
       - nginx.conf
       - 'server/**'
       - 'shared/**'
-      - docker-compose.yml
       - Dockerfile
 
 jobs:
