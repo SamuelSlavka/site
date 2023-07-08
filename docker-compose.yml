@@ -36,7 +36,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
     ports:
-      - 8443:8443
+      - 8080:8080
     depends_on:
       postgres_keycloak:
         condition: service_healthy
