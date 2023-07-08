@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/etc/nginx/conf.d
-      - /site-frontend:/usr/share/site-frontend
+      - /site-frontend/build:/usr/share/site-frontend
       # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
     network_mode: "host"
 
