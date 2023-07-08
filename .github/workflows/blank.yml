@@ -2,7 +2,8 @@ name: Server Build & Push
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - docker-compose.yml
       - nginx.conf
