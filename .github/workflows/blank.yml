@@ -29,6 +29,8 @@ jobs:
             git clone https://github.com/SamuelSlavka/site.git 2> /dev/null
             cd site
             git pull
+            touch .env
+            echo "${{ secrets.SERVER_ENV_PROD }}" > .env
             docker-compose pull
             docker-compose up -d
             docker-compose restart
