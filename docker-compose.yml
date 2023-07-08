@@ -26,6 +26,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:21.0.1
     command: start-dev
+    restart: unless-stopped
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres_keycloak
@@ -45,6 +46,7 @@ services:
  
   postgres_keycloak:
     image: postgres:14.7
+    restart: unless-stopped
     command: postgres -c 'max_connections=100'
     volumes:
       - pgdata_keycloak:/var/lib/postgresql/data
