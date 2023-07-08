@@ -11,6 +11,7 @@ volumes:
     driver: local
   pgdata_keycloak:
     driver: local
+
 services:
   nginx:
     image: nginx:mainline-alpine
@@ -18,6 +19,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/etc/nginx/conf.d
+      - /site-frontend:/usr/share/site-frontend
+      # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
     network_mode: "host"
 
   keycloak:
