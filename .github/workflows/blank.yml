@@ -1,0 +1,35 @@
+name: Server Build & Push
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - 'shared/**'
+      - docker-compose.yml
+      - Dockerfile
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Create env file
+        run: |
+          touch .env
+          echo "${{ secrets.SERVER_ENV_PROD }}" > .env
+      - name: Build image
+        run: docker compose -f docker-compose.yml build
+
+      - name: Deploy Stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            docker-compose pull
+            docker-compose up -d
+            docker-compose restart
+

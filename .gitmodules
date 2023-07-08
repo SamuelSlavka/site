@@ -1,6 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = git@gitlab.com:SamuelSlavka/site-frontend.git
-[submodule "backend"]
-	path = backend
-	url = git@gitlab.com:SamuelSlavka/site-backend.git
