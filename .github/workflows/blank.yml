@@ -6,6 +6,10 @@ on:
     paths:
       - docker-compose.yml
       - nginx.conf
+      - 'server/**'
+      - 'shared/**'
+      - docker-compose.yml
+      - Dockerfile
 
 jobs:
   build_and_push:
