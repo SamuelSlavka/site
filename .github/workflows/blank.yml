@@ -24,10 +24,13 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
+          path: site
           script: |
             pwd
             ls
+            cd site
             docker-compose pull
             docker-compose up -d
             docker-compose restart
+            
 
