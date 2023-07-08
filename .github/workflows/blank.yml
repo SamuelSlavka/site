@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - docker-compose.yml
-      - nginx.conf
-      - 'server/**'
-      - 'shared/**'
-      - Dockerfile
 
 jobs:
   build_and_push:
