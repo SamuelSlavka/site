@@ -25,10 +25,9 @@ services:
 
   keycloak:
     image: jboss/keycloak
-    command: start-dev
     restart: unless-stopped
     environment:
-      - KEYCLOAK_USER=admin
+      - KEYCLOAK_USER=super
       - KEYCLOAK_PASSWORD=${KC_PASS}
       - DB_VENDOR=postgres
       - DB_ADDR=postgres
