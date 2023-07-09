@@ -1,72 +1,32 @@
-version: "3"
-
-networks:
-  monitoring:
-    driver: bridge
-  keycloak_dev_network:
-    driver: bridge
+version: '3'
 
 volumes:
-  db:
-    driver: local
-  pgdata_keycloak:
-    driver: local
+  postgres_data:
+      driver: local
 
 services:
-  nginx:
-    image: nginx:mainline-alpine
-    container_name: nginx
-    restart: unless-stopped
-    volumes:
-      - ./:/etc/nginx/conf.d
-      - /site-frontend/build:/usr/share/site-frontend
-      # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
-    network_mode: "host"
-
+  postgres:
+      image: postgres
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
   keycloak:
-    image: jboss/keycloak
-    restart: unless-stopped
-    environment:
-      - KEYCLOAK_USER=super
-      - KEYCLOAK_PASSWORD=${KC_PASS}
-      - DB_VENDOR=postgres
-      - DB_ADDR=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=${DB_PASS}
-      - PROXY_ADDRESS_FORWARDING=true
-
-    ports:
-      - 8080:8080
-    depends_on:
-      postgres_keycloak:
-        condition: service_healthy
-    networks:
-      - keycloak_dev_network
- 
-  postgres_keycloak:
-    image: postgres:14.7
-    restart: unless-stopped
-    command: postgres -c 'max_connections=100'
-    volumes:
-      - pgdata_keycloak:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: ${DB_PASS:?db password required}
-    healthcheck:
-      test: "exit 0"
-    networks:
-      - keycloak_dev_network
-
-  db:
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${DB_PASS:?db password required}
-    ports:
-      - 5434:5434
-    volumes: 
-      - db:/var/lib/postgresql/data
+      image: quay.io/keycloak/keycloak:legacy
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: Pa55w0rd
+        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+        #JDBC_PARAMS: "ssl=true"
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
