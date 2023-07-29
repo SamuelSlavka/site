@@ -3,14 +3,24 @@ version: '3'
 volumes:
   postgres-kc-db:
       driver: local
-
+  postgres-be-db:
+      driver: local
 services:
+  be-postgres:
+      image: postgres
+      volumes:
+        - postgres-be-db:/var/lib/postgresql/data
+      ports:
+        - 5435:5432
+      environment:
+        POSTGRES_DB: site
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: ${DB_PASS} 
+
   kc-postgres:
       image: postgres
       volumes:
         - postgres-kc-db:/var/lib/postgresql/data
-      ports:
-        - 5434:5434
       environment:
         POSTGRES_DB: keycloak
         POSTGRES_USER: admin
