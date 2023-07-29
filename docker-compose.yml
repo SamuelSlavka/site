@@ -61,9 +61,9 @@ services:
       KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
-      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT: 0
+      KC_HOSTNAME_STRICT_HTTPS: 0
+      KC_HTTP_ENABLED: 0
       KC_PROXY: edge
       KC_EDGE: proxy
       KC_DB: postgres
