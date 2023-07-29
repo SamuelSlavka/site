@@ -1,8 +1,10 @@
 version: '3'
 
 volumes:
-  db:
-    driver: local
+  postgres-kc-db:
+      driver: local
+  postgres-be-db:
+      driver: local
 
 
 services:
@@ -16,17 +18,27 @@ services:
       # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
     network_mode: "host"
 
-  db:
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${DB_PASS:?db password required}
-    ports:
-      - 5434:5434
-    volumes: 
-      - db:/var/lib/postgresql/data
+  be-postgres:
+      image: postgres
+      volumes:
+        - postgres-be-db:/var/lib/postgresql/data
+      ports:
+        - 5435:5434
+      environment:
+        POSTGRES_DB: site
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: ${DB_PASS} 
 
+  kc-postgres:
+      image: postgres
+      volumes:
+        - postgres-kc-db:/var/lib/postgresql/data
+      ports:
+        - 5434:5434
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: ${DB_PASS} 
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -42,16 +54,25 @@ services:
 
     environment:
       # - JAVA_OPTS_APPEND="-D keycloak.profile.feature.upload_script=enabled"
-      - KEYCLOAK_ADMIN_USER=admin # Change the username!
       # - KC_HOSTNAME=keycloak.sam-sla.net
       # - KC_HOSTNAME_PORT=443
-      - KC_HTTPS_CERTIFICATE_FILE=/etc/x509/https/tls.crt
-      - KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/x509/https/tls.key
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=${KC_PASS}
-      - KC_HOSTNAME_STRICT=false
-      - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HTTP_ENABLED=true
-      - KC_PROXY=edge
+      KEYCLOAK_ADMIN_USER: admin # Change the username!
+      KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+      KC_EDGE: proxy
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://kc-postgres:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: ${DB_PASS}
+
+    depends_on:
+      - kc-postgres
+
     command:
-      - start # Start Keycloak in developer mode
+      - start
