@@ -5,6 +5,7 @@ volumes:
       driver: local
   postgres-be-db:
       driver: local
+      
 services:
   be-postgres:
       image: postgres

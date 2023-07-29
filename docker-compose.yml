@@ -6,7 +6,6 @@ volumes:
   postgres-be-db:
       driver: local
 
-
 services:
   nginx:
     image: nginx:mainline-alpine
