@@ -2,45 +2,33 @@ version: '3'
 
 volumes:
   postgres-kc-db:
-    driver: local
+      driver: local
   postgres-be-db:
-    driver: local
-  pgadmin-data:
-    driver: local
-
+      driver: local
+      
 services:
-  nginx:
-    image: nginx:mainline-alpine
-    container_name: nginx
-    restart: unless-stopped
-    volumes:
-      - ./:/etc/nginx/conf.d
-      - /site-frontend/build:/usr/share/site-frontend
-      # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
-    network_mode: "host"
-
   be-postgres:
-    image: postgres:17
-    volumes:
-      - postgres-be-db:/var/lib/postgresql/data
-    ports:
-      - 5435:5432
-    environment:
-      POSTGRES_DB: site
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: ${DB_PASS}
+      image: postgres
+      volumes:
+        - postgres-be-db:/var/lib/postgresql/data
+      ports:
+        - 5435:5432
+      environment:
+        POSTGRES_DB: site
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: ${DB_PASS} 
 
   kc-postgres:
-    image: postgres:17
-    volumes:
-      - postgres-kc-db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: ${DB_PASS}
+      image: postgres
+      volumes:
+        - postgres-kc-db:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: ${DB_PASS} 
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0
+    image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: always
     ports:
@@ -60,9 +48,9 @@ services:
       # KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
-      KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_HTTP_ENABLED: "false"
+      KC_HOSTNAME_STRICT: 0
+      KC_HOSTNAME_STRICT_HTTPS: 0
+      KC_HTTP_ENABLED: 0
       KC_PROXY: edge
       KC_EDGE: proxy
       KC_DB: postgres
@@ -75,20 +63,3 @@ services:
 
     command:
       - start-dev
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    restart: unless-stopped
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - 5050:80
-    networks:
-      - default
-    depends_on:
-      - be-postgres
-      - kc-postgres

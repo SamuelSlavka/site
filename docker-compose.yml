@@ -18,7 +18,7 @@ services:
     network_mode: "host"
 
   be-postgres:
-      image: postgres:17
+      image: postgres
       volumes:
         - postgres-be-db:/var/lib/postgresql/data
       ports:
@@ -29,7 +29,7 @@ services:
         POSTGRES_PASSWORD: ${DB_PASS} 
 
   kc-postgres:
-      image: postgres:17
+      image: postgres
       volumes:
         - postgres-kc-db:/var/lib/postgresql/data
       environment:
@@ -38,7 +38,7 @@ services:
         POSTGRES_PASSWORD: ${DB_PASS} 
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0
+    image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: always
     ports:
@@ -58,9 +58,9 @@ services:
       # KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
-      KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_HTTP_ENABLED: "false"
+      KC_HOSTNAME_STRICT: 0
+      KC_HOSTNAME_STRICT_HTTPS: 0
+      KC_HTTP_ENABLED: 0
       KC_PROXY: edge
       KC_EDGE: proxy
       KC_DB: postgres
