@@ -1,75 +1,67 @@
-version: '3'
+version: "3"
 
 volumes:
   postgres-kc-db:
-      driver: local
+    driver: local
   postgres-be-db:
-      driver: local
+    driver: local
 
 services:
   nginx:
     image: nginx:mainline-alpine
     container_name: nginx
     restart: unless-stopped
+    mem_limit: 50m
+    mem_reservation: 30m
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ./:/etc/nginx/conf.d
+      - ./includes:/etc/nginx/includes/
+      - ./certs:/etc/letsencrypt/live/sam-sla.net
       - /site-frontend/build:/usr/share/site-frontend
-      # - /home/sam/site-frontend/dist/site-frontend:/usr/share/site-frontend
-    network_mode: "host"
 
   be-postgres:
-      image: postgres:17
-      volumes:
-        - postgres-be-db:/var/lib/postgresql/data
-      ports:
-        - 5435:5432
-      environment:
-        POSTGRES_DB: site
-        POSTGRES_USER: admin
-        POSTGRES_PASSWORD: ${DB_PASS} 
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - postgres-be-db:/var/lib/postgresql/data
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_DB: site
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASS}
 
   kc-postgres:
-      image: postgres:17
-      volumes:
-        - postgres-kc-db:/var/lib/postgresql/data
-      environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: admin
-        POSTGRES_PASSWORD: ${DB_PASS} 
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - postgres-kc-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASS}
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0
+    image: quay.io/keycloak/keycloak:25.0
     container_name: keycloak
-    restart: always
-    ports:
-      - 8080:8080 # Listen to HTTP on host port 80 and forward to keycloak on 8080
-      - 8443:8443 # Listen to HTTPS on host port 443 and forward to keycloak on 8443
-
-    volumes:
-      - "./certs/fullchain.pem:/etc/x509/https/tls.crt" # Map certificate to container
-      - "./certs/privkey.pem:/etc/x509/https/tls.key" # Map private key to container
-
+    restart: unless-stopped
     environment:
-      # - JAVA_OPTS_APPEND="-D keycloak.profile.feature.upload_script=enabled"
-      # - KC_HOSTNAME=keycloak.sam-sla.net
-      # - KC_HOSTNAME_PORT=443
-      KEYCLOAK_ADMIN_USER: admin # Change the username!
-      # KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
-      # KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
+      KC_LOG_LEVEL: debug
+      KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
-      KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_HTTP_ENABLED: "false"
-      KC_PROXY: edge
-      KC_EDGE: proxy
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://kc-postgres:5432/keycloak
-      KC_DB_USERNAME: admin
+      KC_DB_SCHEMA: public
       KC_DB_PASSWORD: ${DB_PASS}
-
+      KC_DB_USERNAME: admin
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
     depends_on:
       - kc-postgres
-
     command:
       - start
