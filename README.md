@@ -1,6 +1,6 @@
 # site
 
-Repo contains infrastructure and keycloak and db form site repositories.
+Repo contains infrastructure, keycloak and db form other site repositories.
 
 For setup raname `.env.dist` to just `.env`. It will work with default values in dev dicker compose if other projects are also default.
 
