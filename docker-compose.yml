@@ -19,7 +19,7 @@ services:
     volumes:
       - ./:/etc/nginx/conf.d
       - ./includes:/etc/nginx/includes/
-      - ./certs:/etc/letsencrypt/live/sam-sla.net
+      - ./certs:/etc/letsencrypt/live/samsla.org
       - /site-frontend/build:/usr/share/site-frontend
 
   be-postgres:
