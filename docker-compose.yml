@@ -22,7 +22,6 @@ services:
       - /etc/letsencrypt/live/samsla.org:/etc/letsencrypt/live/samsla.org
       - /etc/letsencrypt/live/api.samsla.org:/etc/letsencrypt/live/api.samsla.org
       - /etc/letsencrypt/live/keycloak.samsla.org:/etc/letsencrypt/live/keycloak.samsla.org
-      - ./certs:/etc/letsencrypt/live/samsla.org
       - /site-frontend/build:/usr/share/site-frontend
 
   be-postgres:
