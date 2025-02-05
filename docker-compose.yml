@@ -19,9 +19,12 @@ services:
     volumes:
       - ./:/etc/nginx/conf.d
       - ./includes:/etc/nginx/includes/
-      - /etc/letsencrypt/live/samsla.org:/etc/letsencrypt/live/samsla.org
-      - /etc/letsencrypt/live/api.samsla.org:/etc/letsencrypt/live/api.samsla.org
-      - /etc/letsencrypt/live/keycloak.samsla.org:/etc/letsencrypt/live/keycloak.samsla.org
+      - /etc/letsencrypt/live/samsla.org/fullchain.pem:/etc/letsencrypt/live/samsla.org/fullchain.pem
+      - /etc/letsencrypt/live/samsla.org/privkey.pem:/etc/letsencrypt/live/samsla.org/privkey.pem
+      - /etc/letsencrypt/live/api.samsla.org/fullchain.pem:/etc/letsencrypt/live/api.samsla.org/fullchain.pem
+      - /etc/letsencrypt/live/api.samsla.org/privkey.pem:/etc/letsencrypt/live/api.samsla.org/privkey.pem
+      - /etc/letsencrypt/live/keycloak.samsla.org/fullchain.pem:/etc/letsencrypt/live/keycloak.samsla.org/fullchain.pem
+      - /etc/letsencrypt/live/keycloak.samsla.org/privkey.pem:/etc/letsencrypt/live/keycloak.samsla.org/privkey.pem
       - /site-frontend/build:/usr/share/site-frontend
 
   be-postgres:
