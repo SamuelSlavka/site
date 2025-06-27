@@ -5,39 +5,44 @@
 .login-pf body {
   background: none;
   background-color: #1c1b22;
+  height: 100%;
 }
 
 .login-pf-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  padding: 2rem;
+  height: 100vh;
 }
 
 /* login card */
 .card-pf {
+  max-height: 90vh;
+  display: inline-block;
   border-radius: 2rem !important;
-  max-width: 900px;
+  width: 100%;
+  max-width: 650px;
   background-color: #212529;
   color: #f1faee;
+  overflow: auto;
 }
 
 /* username */
 #username {
-  background-color: #f1faee !important;
+  background-color: #e0e4ec !important;
   border-radius: 0.8rem !important;
 }
 /* password */
 #password {
-  background-color: #f1faee !important;
+  background-color: #e0e4ec !important;
   border-radius: 0.8rem 0px 0px 0.8rem !important;
 }
 
 /* eye */
 .pf-c-input-group {
-  background-color: #f1faee !important;
+  background-color: #e0e4ec !important;
   border-radius: 0.8rem !important;
-  background-color: #271b2c;
 }
 
 .pf-c-button.pf-m-control {
@@ -53,6 +58,10 @@
   border-radius: 0.8rem !important;
   background-color: #ccccf0;
   color: #271b2c;
+  width: auto;
+  padding: 0.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 /* social */
@@ -67,4 +76,8 @@
 #social-google::after {
   border-radius: 0.8rem !important;
   border-color: #ccccf0 !important;
+}
+
+.pf-c-button.pf-m-control {
+  background-color: #ccccf0;
 }
