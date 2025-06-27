@@ -65,6 +65,9 @@
 }
 
 /* social */
+#kc-social-providers {
+  margin-top: 2rem;
+}
 .kc-social-section h2 {
   font-size: small !important;
 }
@@ -80,4 +83,8 @@
 
 .pf-c-button.pf-m-control {
   background-color: #ccccf0;
+}
+
+#kc-info {
+  margin-top: 2rem;
 }
