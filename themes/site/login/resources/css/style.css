@@ -18,11 +18,12 @@
 
 /* login card */
 .card-pf {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   display: inline-block;
   border-radius: 2rem !important;
   width: 100%;
-  max-width: 650px;
+  max-width: 540px;
   background-color: #212529;
   color: #f1faee;
   overflow: auto;
@@ -58,7 +59,6 @@
   border-radius: 0.8rem !important;
   background-color: #ccccf0;
   color: #271b2c;
-  width: auto;
   padding: 0.5rem;
   padding-left: 2rem;
   padding-right: 2rem;
