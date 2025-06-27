@@ -49,6 +49,9 @@ services:
       KC_DB_USERNAME: admin
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
+      KC_THEME: site
+    volumes:
+      - ./themes:/opt/keycloak/themes:Z
     depends_on:
       - kc-postgres
     command:

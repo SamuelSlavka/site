@@ -65,6 +65,9 @@ services:
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
+      KC_THEME: site
+    volumes:
+      - ./themes:/opt/keycloak/themes:Z
     depends_on:
       - kc-postgres
     command:

@@ -1,0 +1,70 @@
+#kc-header-wrapper {
+  display: none;
+}
+
+.login-pf body {
+  background: none;
+  background-color: #1c1b22;
+}
+
+.login-pf-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* login card */
+.card-pf {
+  border-radius: 2rem !important;
+  max-width: 900px;
+  background-color: #212529;
+  color: #f1faee;
+}
+
+/* username */
+#username {
+  background-color: #f1faee !important;
+  border-radius: 0.8rem !important;
+}
+/* password */
+#password {
+  background-color: #f1faee !important;
+  border-radius: 0.8rem 0px 0px 0.8rem !important;
+}
+
+/* eye */
+.pf-c-input-group {
+  background-color: #f1faee !important;
+  border-radius: 0.8rem !important;
+  background-color: #271b2c;
+}
+
+.pf-c-button.pf-m-control {
+  border-radius: 0px 0.8rem 0.8rem 0px !important;
+}
+
+.pf-c-button.pf-m-control::after {
+  border-radius: 0px 0.8rem 0.8rem 0px !important;
+}
+
+/* sign in  */
+#kc-login {
+  border-radius: 0.8rem !important;
+  background-color: #ccccf0;
+  color: #271b2c;
+}
+
+/* social */
+.kc-social-section h2 {
+  font-size: small !important;
+}
+
+#social-google {
+  border-radius: 0.8rem !important;
+}
+
+#social-google::after {
+  border-radius: 0.8rem !important;
+  border-color: #ccccf0 !important;
+}
