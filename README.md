@@ -20,6 +20,8 @@ To run dev enviroment:
 
 - for each domain on server machine (api.samsla.org, samsla.org, keycloak.samsla.org)
 
-        $ certbot certonly --standalone -d keycloak.samsla.org -d www.keycloak.samsla.org
+        $ certbot certonly --standalone -d keycloak.samsla.org 
+        $ certbot certonly --standalone -d api.samsla.org 
+        $ certbot certonly --standalone -d samsla.org -d www.samsla.org 
 
 - docker binds directly files folder withs myslinks wont work
