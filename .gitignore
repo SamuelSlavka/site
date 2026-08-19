@@ -6,3 +6,5 @@ mc-backups
 site-realm.json
 mc-data
 .idea
+k8s/production/secrets.yaml
+k8s/production/secrets.yml

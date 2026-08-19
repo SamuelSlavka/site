@@ -1,0 +1,22 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nginx-pdb
+  namespace: site
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: nginx
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: keycloak-pdb
+  namespace: site
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: keycloak
+
