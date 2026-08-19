@@ -1,5 +1,3 @@
-version: "3"
-
 volumes:
   postgres-kc-db:
     driver: local
@@ -20,6 +18,12 @@ services:
       POSTGRES_DB: site
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d site"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   kc-postgres:
     image: postgres:17
@@ -30,16 +34,21 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0
+    image: quay.io/keycloak/keycloak:26.1
     container_name: keycloak
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
       # KC_LOG_LEVEL: debug
-      KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
       KC_DB: postgres
@@ -53,12 +62,13 @@ services:
     volumes:
       - ./themes:/opt/keycloak/themes:Z
     depends_on:
-      - kc-postgres
+      kc-postgres:
+        condition: service_healthy
     command:
       - start-dev
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:8.14
     container_name: pgadmin
     restart: unless-stopped
     volumes:
@@ -69,5 +79,7 @@ services:
     ports:
       - 5050:80
     depends_on:
-      - be-postgres
-      - kc-postgres
+      be-postgres:
+        condition: service_healthy
+      kc-postgres:
+        condition: service_healthy

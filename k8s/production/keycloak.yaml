@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: site
+  labels:
+    app: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: site
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      initContainers:
+        - name: prepare-theme
+          image: busybox:1.36
+          command: ["sh", "-c", "set -eu; mkdir -p /theme/login/resources/css; cp /input/theme.properties /theme/login/theme.properties; cp /input/style.css /theme/login/resources/css/style.css"]
+          volumeMounts:
+            - name: keycloak-theme-files
+              mountPath: /input
+            - name: keycloak-theme
+              mountPath: /theme
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.1
+          imagePullPolicy: IfNotPresent
+          args: ["start"]
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: site-secrets
+                  key: KC_PASS
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://kc-postgres:5432/keycloak
+            - name: KC_DB_SCHEMA
+              value: public
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: site-secrets
+                  key: POSTGRES_USER
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: site-secrets
+                  key: DB_PASS
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            - name: KC_THEME
+              value: site
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: keycloak-theme
+              mountPath: /opt/keycloak/themes/site
+      volumes:
+        - name: keycloak-theme-files
+          configMap:
+            name: keycloak-theme-files
+        - name: keycloak-theme
+          emptyDir: {}
+

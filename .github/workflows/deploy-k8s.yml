@@ -1,0 +1,48 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Apply namespace
+        run: kubectl apply -f k8s/production/namespace.yaml
+
+      - name: Sync cluster secrets
+        run: |
+          kubectl create secret generic site-secrets \
+            --namespace=site \
+            --from-literal=DB_PASS="${{ secrets.DB_PASS }}" \
+            --from-literal=KC_PASS="${{ secrets.KC_PASS }}" \
+            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            --from-literal=REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}" \
+            --from-literal=KAFKA_BOOTSTRAP_SERVERS="${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy manifests
+        run: kubectl apply -k k8s/production/
+
+      - name: Wait for nginx rollout
+        run: kubectl rollout status deployment/nginx -n site --timeout=120s
+
+      - name: Wait for keycloak rollout
+        run: kubectl rollout status deployment/keycloak -n site --timeout=180s

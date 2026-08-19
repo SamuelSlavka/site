@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-theme-files
+  namespace: site
+data:
+  theme.properties: |
+    parent=keycloak
+    styles=css/style.css
+  style.css: |
+    #kc-header-wrapper {
+      display: none;
+    }
+    .login-pf body {
+      background: none;
+      background-color: #1c1b22;
+      height: 100%;
+    }
+    .login-pf-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      height: 100vh;
+    }
+    .card-pf {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      max-height: 90vh;
+      display: inline-block;
+      border-radius: 2rem !important;
+      width: 100%;
+      max-width: 500px;
+      background-color: #212529;
+      color: #f1faee;
+      overflow: auto;
+    }
+    #username {
+      background-color: #e0e4ec !important;
+      border-radius: 0.8rem !important;
+    }
+    #password {
+      background-color: #e0e4ec !important;
+      border-radius: 0.8rem 0 0 0.8rem !important;
+    }
+    .pf-c-input-group {
+      background-color: #e0e4ec !important;
+      border-radius: 0.8rem !important;
+    }
+    .pf-c-button.pf-m-control {
+      border-radius: 0 0.8rem 0.8rem 0 !important;
+      background-color: #ccccf0;
+    }
+    .pf-c-button.pf-m-control::after {
+      border-radius: 0 0.8rem 0.8rem 0 !important;
+    }
+    #kc-login {
+      border-radius: 0.8rem !important;
+      background-color: #ccccf0;
+      color: #271b2c;
+      padding: 0.5rem 2rem;
+    }
+    #kc-social-providers {
+      margin-top: 2rem;
+    }
+    .kc-social-section h2 {
+      font-size: small !important;
+    }
+    #social-google {
+      border-radius: 0.8rem !important;
+    }
+    #social-google::after {
+      border-radius: 0.8rem !important;
+      border-color: #ccccf0 !important;
+    }
+    #kc-info {
+      margin-top: 2rem;
+    }
+

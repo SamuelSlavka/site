@@ -1,0 +1,68 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: keycloak-monitor
+  namespace: site
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - site
+  selector:
+    matchLabels:
+      app: keycloak
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-exporter-monitor
+  namespace: site
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - site
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: site-health-alerts
+  namespace: site
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: site-health
+      rules:
+        - alert: KeycloakMetricsDown
+          expr: up{namespace="site", service="keycloak"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Keycloak target is down
+            description: Prometheus cannot scrape Keycloak metrics for 5 minutes.
+        - alert: KafkaExporterDown
+          expr: up{namespace="site", service="kafka-exporter"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Kafka exporter target is down
+            description: Prometheus cannot scrape Kafka exporter metrics for 5 minutes.
+

@@ -1,5 +1,3 @@
-version: "3"
-
 volumes:
   postgres-kc-db:
     driver: local
@@ -11,21 +9,21 @@ services:
     image: nginx:mainline-alpine
     container_name: nginx
     restart: unless-stopped
-    mem_limit: 50m
-    mem_reservation: 30m
+    deploy:
+      resources:
+        limits:
+          memory: 50m
+        reservations:
+          memory: 30m
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./:/etc/nginx/conf.d
-      - ./includes:/etc/nginx/includes/
-      - /etc/letsencrypt/live/samsla.org/fullchain.pem:/etc/letsencrypt/live/samsla.org/fullchain.pem
-      - /etc/letsencrypt/live/samsla.org/privkey.pem:/etc/letsencrypt/live/samsla.org/privkey.pem
-      - /etc/letsencrypt/live/api.samsla.org/fullchain.pem:/etc/letsencrypt/live/api.samsla.org/fullchain.pem
-      - /etc/letsencrypt/live/api.samsla.org/privkey.pem:/etc/letsencrypt/live/api.samsla.org/privkey.pem
-      - /etc/letsencrypt/live/keycloak.samsla.org/fullchain.pem:/etc/letsencrypt/live/keycloak.samsla.org/fullchain.pem
-      - /etc/letsencrypt/live/keycloak.samsla.org/privkey.pem:/etc/letsencrypt/live/keycloak.samsla.org/privkey.pem
-      - /site-frontend/build:/usr/share/site-frontend
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./includes:/etc/nginx/includes/:ro
+      - /etc/letsencrypt/live/samsla.org/fullchain.pem:/etc/letsencrypt/live/samsla.org/fullchain.pem:ro
+      - /etc/letsencrypt/live/samsla.org/privkey.pem:/etc/letsencrypt/live/samsla.org/privkey.pem:ro
+      - /site-frontend/build:/usr/share/site-frontend:ro
 
   be-postgres:
     image: postgres:17
@@ -38,6 +36,12 @@ services:
       POSTGRES_DB: site
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d site"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   kc-postgres:
     image: postgres:17
@@ -48,13 +52,18 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0
+    image: quay.io/keycloak/keycloak:26.1
     container_name: keycloak
     restart: unless-stopped
     environment:
-      KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KC_PASS}
       KC_DB: postgres
@@ -69,6 +78,7 @@ services:
     volumes:
       - ./themes:/opt/keycloak/themes:Z
     depends_on:
-      - kc-postgres
+      kc-postgres:
+        condition: service_healthy
     command:
       - start
